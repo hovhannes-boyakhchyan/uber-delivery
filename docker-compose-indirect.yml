@@ -1,0 +1,33 @@
+version: '3.9'
+services:
+
+  api:
+    env_file:
+      - ./.production.env
+    build: .
+    restart: unless-stopped
+    ports:
+      - "${PORT_EXPOSE}:${PORT}"
+    volumes:
+      - uber-api-data:/usr/src/app/data
+    networks:
+      - mynet
+  mongo-db:
+    env_file:
+      - ./.production.env
+    image: mongo:latest
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
+    volumes:
+      - uber-mongo-db-data:/data/db
+    ports:
+      - "${MONGO_DB_PORT_EXPOSE}:${MONGO_DB_PORT}"
+    networks:
+      - mynet
+volumes:
+  uber-api-data:
+  uber-mongo-db-data:
+networks:
+  mynet:
